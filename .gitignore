@@ -1,0 +1,17 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+
+# Node / Web
+node_modules/
+dist/
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
