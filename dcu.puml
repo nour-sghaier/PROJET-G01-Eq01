@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+actor "Étudiant" as E
+actor "Commerçant" as C
+actor "Administrateur" as A
+
+rectangle CampusSave {
+  usecase "S'inscrire / se connecter" as u1
+  usecase "Consulter et rechercher les offres" as u2
+  usecase "Réserver" as u3
+  usecase "Payer en ligne" as u4
+  usecase "Afficher le QR code" as u5
+  usecase "Consulter ses commandes" as u6
+  usecase "Gérer son commerce" as u7
+  usecase "Gérer ses offres" as u8
+  usecase "Traiter les commandes" as u9
+  usecase "Valider un QR au retrait" as u10
+  usecase "Valider les commerçants" as u11
+  usecase "Gérer les utilisateurs" as u12
+  usecase "Voir un tableau de bord" as u13
+}
+
+E -- u1
+E -- u2
+E -- u3
+E -- u4
+E -- u5
+E -- u6
+E -- u13
+
+C -- u1
+C -- u7
+C -- u8
+C -- u9
+C -- u10
+C -- u13
+
+A -- u1
+A -- u11
+A -- u12
+A -- u13
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+class User {
+  +uid
+  +nom
+  +email
+  +role
+  +telephone
+  +active
+  +fcmToken
+}
+class Shop {
+  +id
+  +nom
+  +type
+  +adresse
+  +telephone
+  +status
+}
+class Offer {
+  +id
+  +titre
+  +categorie
+  +prixInitial
+  +prixReduit
+  +quantite
+  +quantiteRestante
+  +heureDebut
+  +heureFin
+  +status
+}
+class Order {
+  +id
+  +items
+  +total
+  +status
+  +qrToken
+  +expiresAt
+  +createdAt
+}
+class Payment {
+  +orderId
+  +paymentRef
+  +montant
+  +status
+}
+
+User "1" --> "0..1" Shop : possède (commerçant)
+Shop "1" --> "*" Offer : publie
+User "1" --> "*" Order : passe (étudiant)
+Shop "1" --> "*" Order : reçoit
+Order "*" --> "*" Offer : contient (lignes)
+Order "1" --> "0..1" Payment : réglée par
+@enduml
