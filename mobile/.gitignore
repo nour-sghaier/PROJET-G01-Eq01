@@ -46,3 +46,10 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+lib/firebase_options.dart
+firebase.json
+build_log.txt
+devtools_options.yaml
+android/app/google-services.json
+android/app/local.properties
+android/app/.gradle/
