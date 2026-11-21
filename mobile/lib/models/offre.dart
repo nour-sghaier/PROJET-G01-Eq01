@@ -1,3 +1,5 @@
+import '../core/format.dart';
+
 class Offre {
   final String id;
   final String commerceId;
@@ -9,7 +11,6 @@ class Offre {
   final double prixInitial;
   final double prixReduit;
   final int quantiteDisponible;
-  final double poidsEstimeKg; // bonus Impact Dashboard
   final DateTime heureDebutRecuperation;
   final DateTime heureFinRecuperation;
   final String statut; // ACTIVE, EPUISEE, EXPIREE
@@ -25,13 +26,17 @@ class Offre {
     required this.prixInitial,
     required this.prixReduit,
     required this.quantiteDisponible,
-    this.poidsEstimeKg = 0,
     required this.heureDebutRecuperation,
     required this.heureFinRecuperation,
     this.statut = 'ACTIVE',
   });
 
-  bool get estDisponible => statut == 'ACTIVE' && quantiteDisponible > 0;
+  /// Offre dont l'heure de fin de récupération est dépassée.
+  bool get expiree =>
+      statut == 'EXPIREE' || heureFinRecuperation.isBefore(DateTime.now());
+
+  bool get estDisponible =>
+      statut == 'ACTIVE' && quantiteDisponible > 0 && !expiree;
 
   factory Offre.fromJson(Map<String, dynamic> j) => Offre(
         id: j['id'] ?? '',
@@ -44,22 +49,8 @@ class Offre {
         prixInitial: (j['prixInitial'] as num).toDouble(),
         prixReduit: (j['prixReduit'] as num).toDouble(),
         quantiteDisponible: (j['quantiteDisponible'] as num).toInt(),
-        poidsEstimeKg: (j['poidsEstimeKg'] as num?)?.toDouble() ?? 0,
-        heureDebutRecuperation: DateTime.parse(j['heureDebutRecuperation']),
-        heureFinRecuperation: DateTime.parse(j['heureFinRecuperation']),
+        heureDebutRecuperation: parseDate(j['heureDebutRecuperation']),
+        heureFinRecuperation: parseDate(j['heureFinRecuperation']),
         statut: j['statut'] ?? 'ACTIVE',
       );
-
-  Map<String, dynamic> toJson() => {
-        'titre': titre,
-        'description': description,
-        'photo': photo,
-        'categorie': categorie,
-        'prixInitial': prixInitial,
-        'prixReduit': prixReduit,
-        'quantiteDisponible': quantiteDisponible,
-        'poidsEstimeKg': poidsEstimeKg,
-        'heureDebutRecuperation': heureDebutRecuperation.toIso8601String(),
-        'heureFinRecuperation': heureFinRecuperation.toIso8601String(),
-      };
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/utilisateur.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/etat.dart';
 import 'auth/login_screen.dart';
-import 'placeholder_screen.dart';
+import 'commercant/commercant_gate.dart';
+import 'etudiant/etudiant_home.dart';
 
+/// Aiguille l'utilisateur selon son état : chargement, connexion, ou espace du rôle.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -15,16 +19,21 @@ class AuthGate extends StatelessWidget {
     if (auth.chargement) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (auth.utilisateur == null) {
+    final u = auth.utilisateur;
+    if (u == null) {
       return const LoginScreen();
     }
-    switch (auth.utilisateur!.role) {
+    switch (u.role) {
       case Role.etudiant:
-        return const PlaceholderScreen(titre: 'Espace Étudiant');
+        return const EtudiantHome();
       case Role.commercant:
-        return const PlaceholderScreen(titre: 'Espace Commerçant');
+        return const CommercantGate();
       case Role.admin:
-        return const PlaceholderScreen(titre: 'Administrateur : utilisez l\'application web');
+        return const EcranMessage(
+          titre: 'Administrateur',
+          message:
+              "L'espace administrateur est disponible uniquement sur l'application web.",
+        );
     }
   }
 }

@@ -1,13 +1,13 @@
+import '../core/format.dart';
+
 class LigneCommande {
-  final String? offreId;
-  final String? panierId; // une ligne = une offre OU un panier surprise
+  final String offreId;
   final String titre;
   final int quantite;
   final double prixUnitaire;
 
   LigneCommande({
-    this.offreId,
-    this.panierId,
+    required this.offreId,
     required this.titre,
     required this.quantite,
     required this.prixUnitaire,
@@ -16,24 +16,18 @@ class LigneCommande {
   double get sousTotal => quantite * prixUnitaire;
 
   factory LigneCommande.fromJson(Map<String, dynamic> j) => LigneCommande(
-        offreId: j['offreId'],
-        panierId: j['panierId'],
+        offreId: j['offreId'] ?? '',
         titre: j['titre'] ?? '',
         quantite: (j['quantite'] as num).toInt(),
         prixUnitaire: (j['prixUnitaire'] as num).toDouble(),
       );
-
-  Map<String, dynamic> toJson() => {
-        'offreId': offreId,
-        'panierId': panierId,
-        'quantite': quantite,
-      };
 }
 
 class Commande {
   final String id;
   final String commerceId;
   final String commerceNom;
+  final String etudiantNom; // renseigné pour le commerçant
   final DateTime dateCommande;
   final double montantTotal;
   final String statut; // EN_ATTENTE_PAIEMENT, PAYEE, RECUPEREE, ANNULEE
@@ -44,6 +38,7 @@ class Commande {
     required this.id,
     required this.commerceId,
     this.commerceNom = '',
+    this.etudiantNom = '',
     required this.dateCommande,
     required this.montantTotal,
     required this.statut,
@@ -55,11 +50,12 @@ class Commande {
         id: j['id'] ?? '',
         commerceId: j['commerceId'] ?? '',
         commerceNom: j['commerceNom'] ?? '',
-        dateCommande: DateTime.parse(j['dateCommande']),
+        etudiantNom: j['etudiantNom'] ?? '',
+        dateCommande: parseDate(j['dateCommande']),
         montantTotal: (j['montantTotal'] as num).toDouble(),
         statut: j['statut'] ?? 'EN_ATTENTE_PAIEMENT',
         lignes: ((j['lignes'] ?? []) as List)
-            .map((e) => LigneCommande.fromJson(e))
+            .map((e) => LigneCommande.fromJson(Map<String, dynamic>.from(e)))
             .toList(),
         qrCode: j['qrCode'],
       );

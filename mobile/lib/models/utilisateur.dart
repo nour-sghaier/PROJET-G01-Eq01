@@ -12,7 +12,6 @@ class Utilisateur {
   final String email;
   final String? telephone;
   final Role role;
-  final int ecoPoints; // bonus EcoPoints
 
   Utilisateur({
     required this.id,
@@ -21,7 +20,6 @@ class Utilisateur {
     required this.email,
     this.telephone,
     required this.role,
-    this.ecoPoints = 0,
   });
 
   factory Utilisateur.fromJson(Map<String, dynamic> j) => Utilisateur(
@@ -31,15 +29,5 @@ class Utilisateur {
         email: j['email'] ?? '',
         telephone: j['telephone'],
         role: roleFromString(j['role']),
-        ecoPoints: (j['ecoPoints'] ?? 0) as int,
       );
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'nom': nom,
-        'prenom': prenom,
-        'email': email,
-        'telephone': telephone,
-        'role': role.name,
-      };
 }

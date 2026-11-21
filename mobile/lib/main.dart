@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'core/theme.dart';
 import 'providers/auth_provider.dart';
 import 'screens/auth_gate.dart';
+import 'services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ class CampusSaveApp extends StatelessWidget {
       title: 'CampusSave',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
+      scaffoldMessengerKey: NotificationService.messengerKey,
       home: const AuthGate(),
     );
   }

@@ -22,7 +22,8 @@ class ApiService {
   }
 
   Uri _uri(String path, [Map<String, String>? query]) =>
-      Uri.parse('${ApiConfig.baseUrl}$path').replace(queryParameters: query);
+      Uri.parse('${ApiConfig.baseUrl}$path').replace(
+          queryParameters: (query == null || query.isEmpty) ? null : query);
 
   dynamic _handle(http.Response r) {
     if (r.statusCode >= 200 && r.statusCode < 300) {

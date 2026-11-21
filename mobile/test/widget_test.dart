@@ -1,30 +1,35 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:mobile/main.dart';
+import 'package:mobile/core/format.dart';
+import 'package:mobile/models/commande.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('formatPrix affiche 3 décimales et la devise', () {
+    expect(formatPrix(3), '3.000 DT');
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  test('validateurs de formulaire', () {
+    expect(Valid.email('a@b.tn'), isNull);
+    expect(Valid.email('abc'), isNotNull);
+    expect(Valid.motDePasse('12345'), isNotNull);
+    expect(Valid.telephone('12345678'), isNull);
+    expect(Valid.telephone('123'), isNotNull);
+    expect(Valid.entierPositif('0'), isNotNull);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('Commande.fromJson lit les lignes et le QR code', () {
+    final c = Commande.fromJson({
+      'id': 'c1',
+      'commerceId': 'k1',
+      'dateCommande': '2026-11-24T16:00:00.000Z',
+      'montantTotal': 6,
+      'statut': 'PAYEE',
+      'qrCode': 'abc',
+      'lignes': [
+        {'offreId': 'o1', 'titre': 'Sandwich', 'quantite': 2, 'prixUnitaire': 3}
+      ],
+    });
+    expect(c.lignes.first.sousTotal, 6);
+    expect(c.qrCode, 'abc');
   });
 }

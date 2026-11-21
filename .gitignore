@@ -15,3 +15,19 @@ dist/
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+
+# Secrets (ne jamais commiter)
+.env
+.env.*
+!.env.example
+serviceAccountKey*.json
+*-firebase-adminsdk-*.json
+
+# Flutter local
+local.properties
+mobile/.dart_tool/
+mobile/build/
+
+# Divers
+.DS_Store
+*.log

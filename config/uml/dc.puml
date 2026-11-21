@@ -1,0 +1,67 @@
+@startuml
+' Diagramme de classes CampusSave (noms alignés sur l'API et sur Firestore)
+enum Role {
+  etudiant
+  commercant
+  admin
+}
+
+class Utilisateur {
+  +id
+  +nom
+  +prenom
+  +email
+  +telephone
+  +role : Role
+  +fcmToken
+}
+class Commerce {
+  +id
+  +nom
+  +type : RESTAURANT | CAFETERIA
+  +adresse
+  +telephone
+  +description
+  +statutValidation : EN_ATTENTE | VALIDE | REFUSE
+}
+class Offre {
+  +id
+  +titre
+  +description
+  +categorie
+  +photo
+  +prixInitial
+  +prixReduit
+  +quantiteDisponible
+  +heureDebutRecuperation
+  +heureFinRecuperation
+  +statut : ACTIVE | EPUISEE | EXPIREE
+}
+class Commande {
+  +id
+  +dateCommande
+  +montantTotal
+  +statut : EN_ATTENTE_PAIEMENT | PAYEE | RECUPEREE | ANNULEE
+  +qrCode
+}
+class LigneCommande {
+  +titre
+  +quantite
+  +prixUnitaire
+}
+class Paiement {
+  +paymentRef
+  +montant
+  +statut
+}
+
+Utilisateur --> Role
+Utilisateur "1" --> "0..1" Commerce : possède (commerçant)
+Utilisateur "1" --> "*" Commande : passe (étudiant)
+Utilisateur "1" ..> "*" Commerce : valide (administrateur)
+Commerce "1" --> "*" Offre : publie
+Commerce "1" --> "*" Commande : reçoit
+Commande "1" *-- "1..*" LigneCommande : contient
+LigneCommande "*" --> "1" Offre : concerne
+Commande "1" --> "0..1" Paiement : réglée par
+@enduml
