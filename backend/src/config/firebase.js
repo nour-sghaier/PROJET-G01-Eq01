@@ -11,4 +11,5 @@ module.exports = {
   auth: admin.auth(),
   db: admin.firestore(),
   messaging: admin.messaging(),
+  FieldValue: admin.firestore.FieldValue,
 };

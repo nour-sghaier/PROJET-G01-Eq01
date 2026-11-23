@@ -75,3 +75,23 @@ Commande : `{id, commerceId, commerceNom, etudiantNom, dateCommande, montantTota
 Envoyer avec `admin.messaging().send({token, notification: {title, body}})` :
 - à l'étudiant : commande payée / commande récupérée ;
 - au commerçant : nouvelle commande payée ; commerce validé/refusé.
+
+
+## Paiement : mode démonstration et Konnect
+- Si `KONNECT_API_KEY` et `KONNECT_WALLET_ID` sont renseignés dans `backend/.env`, `/orders/:id/pay` appelle Konnect (sandbox).
+  Le backend confirme le paiement par le **webhook** `GET /api/payments/webhook?payment_ref=...` **ou** en interrogeant Konnect
+  quand l'étudiant rafraîchit `GET /orders/:id` (ngrok n'est donc pas obligatoire).
+- Sinon, `payUrl` pointe vers une page de **paiement de démonstration** du backend (`/api/payments/simulate/:ref`) avec un bouton « Confirmer le paiement ».
+  `PUBLIC_URL` doit être l'adresse du backend vue depuis l'appareil (`http://10.0.2.2:3000` pour l'émulateur, `http://IP_DU_PC:3000` pour un téléphone).
+- Dans les deux cas, seul le backend passe la commande à `PAYEE` et génère le `qrCode`.
+
+## Administrateur (web uniquement) : toutes les routes exigent le rôle `admin`
+| Méthode | Route | Détail |
+|---|---|---|
+| GET | `/admin/commerces?statut=` | Liste des commerces (`statut` : EN_ATTENTE, VALIDE, REFUSE) avec `proprietaireNom` et `proprietaireEmail` |
+| PUT | `/admin/commerces/:id/statut` | `{statut: "VALIDE"\|"REFUSE"}` → valide ou refuse (notification au commerçant) |
+| GET | `/admin/users` | Tous les utilisateurs `{id, nom, prenom, email, telephone, role, active}` |
+| PUT | `/admin/users/:id/active` | `{active: true\|false}` → active ou désactive un compte (jamais un admin) |
+| GET | `/stats/me` | Pour l'admin : `{nbUtilisateurs, nbEtudiants, nbCommercants, commercesEnAttente, commercesValides, nbCommandes, chiffreAffaires}` |
+
+Un compte désactivé reçoit `403 Compte désactivé.` sur toutes les routes.
