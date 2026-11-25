@@ -30,4 +30,7 @@ mobile/build/
 
 # Divers
 .DS_Store
-*.log
+*.logweb/.env
+backend/.env
+backend/serviceAccountKey.json
+backend/testFirebase.js
