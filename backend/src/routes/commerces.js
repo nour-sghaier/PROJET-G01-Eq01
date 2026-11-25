@@ -1,5 +1,5 @@
 const express = require('express');
-const { db, FieldValue } = require('../config/firebase');
+const { db, FieldValue } = require('../firebase');
 const { acces } = require('../middleware/auth');
 const { commerceDuCommercant, vueCommerce } = require('../services/donnees');
 const { wrap, erreur, texte } = require('../utils');

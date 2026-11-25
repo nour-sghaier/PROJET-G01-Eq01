@@ -1,4 +1,4 @@
-const { db } = require('../config/firebase');
+const { db } = require('../firebase');
 const { depuisDoc, enDate } = require('../utils');
 
 // Commerce appartenant au commerçant (null s'il n'en a pas encore).

@@ -1,21 +1,57 @@
-import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import { fakeOffers } from '../data/fakeOffers'
+import { api } from '../api'
 
 function OfferDetail() {
   const { id } = useParams()
-  const offer = fakeOffers.find((o) => o.id === Number(id))
+  const navigate = useNavigate()
 
+  const [offer, setOffer] = useState(null)
+  const [chargement, setChargement] = useState(true)
   const [quantite, setQuantite] = useState(1)
   const [message, setMessage] = useState('')
+  const [erreur, setErreur] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+
+  // Charge l'offre réelle depuis le backend (Firestore).
+  useEffect(() => {
+    api('/offers')
+      .then((liste) => {
+        const o = liste.find((x) => String(x.id) === String(id))
+        if (o) {
+          setOffer({
+            id: o.id,
+            commerceId: o.commerceId,
+            produit: o.titre,
+            commerce: o.commerceNom,
+            categorie: o.categorie,
+            photo: o.photo,
+            prixInitial: o.prixInitial,
+            prixReduit: o.prixReduit,
+            quantite: o.quantiteDisponible,
+          })
+        }
+      })
+      .catch((e) => setErreur(e.message))
+      .finally(() => setChargement(false))
+  }, [id])
+
+  if (chargement) {
+    return (
+      <div className="min-h-screen bg-green-50">
+        <Navbar />
+        <p className="p-8 text-gray-600">Chargement…</p>
+      </div>
+    )
+  }
 
   if (!offer) {
     return (
       <div className="min-h-screen bg-green-50">
         <Navbar />
         <div className="p-8">
-          <p className="text-gray-600 mb-4">Offre introuvable.</p>
+          <p className="text-gray-600 mb-4">{erreur || 'Offre introuvable.'}</p>
           <Link to="/offers" className="text-green-700 font-semibold">
             Retour aux offres
           </Link>
@@ -34,10 +70,27 @@ function OfferDetail() {
     if (quantite < offer.quantite) setQuantite(quantite + 1)
   }
 
-  const reserver = () => {
-    setMessage(
-      `Réservation enregistrée : ${quantite} x ${offer.produit} pour ${total} DT.`
-    )
+  const reserver = async () => {
+    setMessage('')
+    setErreur('')
+    setEnvoi(true)
+    try {
+      await api('/orders', {
+        method: 'POST',
+        body: JSON.stringify({
+          commerceId: offer.commerceId,
+          lignes: [{ offreId: offer.id, quantite }],
+        }),
+      })
+      setMessage(
+        `Réservation enregistrée : ${quantite} x ${offer.produit} pour ${total} DT.`
+      )
+      setTimeout(() => navigate('/orders'), 1200)
+    } catch (e) {
+      setErreur(e.message)
+    } finally {
+      setEnvoi(false)
+    }
   }
 
   return (
@@ -49,17 +102,19 @@ function OfferDetail() {
         </Link>
 
         <div className="bg-white rounded-xl shadow-md overflow-hidden mt-4">
-          <img
-            src={offer.photo}
-            alt={offer.produit}
-            className="w-full h-64 object-cover"
-          />
+          {offer.photo && (
+            <img
+              src={offer.photo}
+              alt={offer.produit}
+              className="w-full h-64 object-cover"
+            />
+          )}
           <div className="p-6 flex flex-col gap-2">
             <h1 className="text-3xl font-bold text-gray-800">
               {offer.produit}
             </h1>
             <p className="text-gray-500">
-              {offer.commerce} · {offer.categorie}
+              {offer.commerce} {offer.categorie && `· ${offer.categorie}`}
             </p>
             <div className="flex items-center gap-3 mt-2">
               <span className="text-gray-400 line-through">
@@ -95,14 +150,20 @@ function OfferDetail() {
 
             <button
               onClick={reserver}
-              className="mt-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700"
+              disabled={envoi}
+              className="mt-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:opacity-50"
             >
-              Réserver
+              {envoi ? 'Réservation…' : 'Réserver'}
             </button>
 
             {message && (
               <p className="mt-2 bg-green-100 text-green-800 p-3 rounded-lg">
                 {message}
+              </p>
+            )}
+            {erreur && (
+              <p className="mt-2 bg-red-100 text-red-700 p-3 rounded-lg">
+                {erreur}
               </p>
             )}
           </div>

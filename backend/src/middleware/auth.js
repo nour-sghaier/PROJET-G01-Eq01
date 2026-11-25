@@ -1,4 +1,4 @@
-const { auth, db } = require('../config/firebase');
+const { auth, db } = require('../firebase');
 const { erreur, wrap } = require('../utils');
 
 // Vérifie le token Firebase (en-tête Authorization: Bearer ...) et charge le profil

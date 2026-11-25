@@ -1,9 +1,11 @@
 // Initialisation de Firebase Admin (Auth, Firestore, Cloud Messaging).
 // Les identifiants viennent du fichier indiqué par GOOGLE_APPLICATION_CREDENTIALS.
-const admin = require('firebase-admin');
 
+const admin = require('firebase-admin');
 if (!admin.apps.length) {
-  admin.initializeApp({ credential: admin.credential.applicationDefault() });
+  admin.initializeApp({
+    credential: admin.credential.cert(require('../serviceAccountKey.json')),
+  });
 }
 
 module.exports = {

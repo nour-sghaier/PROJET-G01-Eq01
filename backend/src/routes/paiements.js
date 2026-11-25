@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../config/firebase');
+const { db } = require('../firebase');
 const { confirmerPaiement } = require('../services/paiement');
 const konnect = require('../services/konnect');
 const { wrap, erreur } = require('../utils');
@@ -57,7 +57,16 @@ router.get(
   wrap(async (req, res) => {
     const snap = await commandeDuPaiement(req.params.ref);
     await confirmerPaiement(snap.id);
-    res.send(page('Paiement confirmé ✔', "Retournez dans l'application CampusSave : votre QR code est prêt."));
+    const web = process.env.WEB_ORIGIN || 'http://localhost:5173';
+    res.send(
+      page(
+        'Paiement confirmé ✔',
+        'Votre QR code est prêt.',
+        `<a href="${web}/orders"
+            style="background:#2e7d32;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none">
+            Retour à mes commandes</a>`
+      )
+    );
   })
 );
 

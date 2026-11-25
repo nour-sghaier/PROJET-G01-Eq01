@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../config/firebase');
+const { db } = require('../firebase');
 const { acces } = require('../middleware/auth');
 const { commerceDuCommercant, statutOffre } = require('../services/donnees');
 const { wrap, depuisDoc } = require('../utils');

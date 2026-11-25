@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-require('./config/firebase'); // initialise Firebase Admin au démarrage
+const {db}=require('./firebase'); // initialise Firebase Admin au démarrage
 
 const app = express();
 

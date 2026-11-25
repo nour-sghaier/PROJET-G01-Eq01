@@ -1,4 +1,4 @@
-const { db, messaging } = require('../config/firebase');
+const { db, messaging } = require('../firebase');
 
 // Envoie une notification FCM à un utilisateur. Ne bloque jamais l'API en cas d'échec.
 async function notifier(userId, titre, texte) {

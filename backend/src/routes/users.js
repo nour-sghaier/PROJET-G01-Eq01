@@ -1,5 +1,5 @@
 const express = require('express');
-const { db, FieldValue } = require('../config/firebase');
+const { db, FieldValue } = require('../firebase');
 const { authentifier, acces } = require('../middleware/auth');
 const { wrap, erreur, texte } = require('../utils');
 

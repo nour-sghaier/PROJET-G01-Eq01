@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { db } = require('../config/firebase');
+const { db } = require('../firebase');
 const { notifier } = require('./notifications');
 const konnect = require('./konnect');
 

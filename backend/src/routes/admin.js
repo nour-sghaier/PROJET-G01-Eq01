@@ -1,5 +1,5 @@
 const express = require('express');
-const { db } = require('../config/firebase');
+const { db } = require('../firebase');
 const { acces } = require('../middleware/auth');
 const { notifier } = require('../services/notifications');
 const { wrap, erreur, depuisDoc } = require('../utils');
