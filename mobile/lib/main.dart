@@ -13,7 +13,8 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       create: (_) => AuthProvider(),
-      child: const CampusSaveApp(),
+      child: const
+      CampusSaveApp(),
     ),
   );
 }
