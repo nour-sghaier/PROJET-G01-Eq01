@@ -57,8 +57,25 @@ router.get(
   wrap(async (req, res) => {
     const snap = await commandeDuPaiement(req.params.ref);
     await confirmerPaiement(snap.id);
+<<<<<<< HEAD
     res.send(page('Paiement confirmé ✔', "Retournez dans l'application CampusSave : votre QR code est prêt."));
   })
 );
 
 module.exports = router;
+=======
+    const web = process.env.WEB_ORIGIN || 'http://localhost:5173';
+    res.send(
+      page(
+        'Paiement confirmé ✔',
+        'Votre QR code est prêt.',
+        `<a href="${web}/orders"
+            style="background:#2e7d32;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none">
+            Retour à mes commandes</a>`
+      )
+    );
+  })
+);
+
+module.exports = router;
+>>>>>>> af66685a8c46d8b363b1251aacfddb968bcbb83d

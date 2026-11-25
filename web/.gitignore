@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .env
 .env.local
+.env
+.env.*
+serviceAccountKey*.json
+*-firebase-adminsdk-*.json

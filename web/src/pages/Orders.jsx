@@ -1,26 +1,39 @@
+import { useEffect, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import Navbar from '../components/Navbar'
+import { useAuth } from '../context/AuthContext'
+import { api } from '../api'
 
-const fakeOrders = [
-  {
-    id: 'CMD-1001',
-    produit: 'Pizza margherita',
-    commerce: 'Pizzeria Essect',
-    quantite: 2,
-    total: 12,
-    statut: 'Payée',
-  },
-  {
-    id: 'CMD-1002',
-    produit: 'Croissant',
-    commerce: 'Boulangerie Lac',
-    quantite: 3,
-    total: 3,
-    statut: 'Payée',
-  },
-]
+const libelle = {
+  EN_ATTENTE_PAIEMENT: 'En attente de paiement',
+  PAYEE: 'Payée',
+  RECUPEREE: 'Récupérée',
+  ANNULEE: 'Annulée',
+}
 
 function Orders() {
+  const { user } = useAuth()
+  const [commandes, setCommandes] = useState([])
+  const [erreur, setErreur] = useState('')
+
+  const charger = () =>
+    api('/orders/mine').then(setCommandes).catch((e) => setErreur(e.message))
+
+  useEffect(() => {
+    if (user) charger()
+  }, [user])
+
+const payer = async (id) => {
+  setErreur('')
+  try {
+    const { payUrl } = await api(`/orders/${id}/pay`, { method: 'POST' })
+    window.location.href = payUrl.replace('10.0.2.2', 'localhost')
+  } catch (e) {
+    setErreur(e.message)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
   return (
     <div className="min-h-screen bg-green-50">
       <Navbar />
@@ -29,23 +42,35 @@ function Orders() {
           Mes commandes
         </h1>
 
+        {erreur && <p className="text-red-600 mb-4">{erreur}</p>}
+
         <div className="flex flex-col gap-4">
-          {fakeOrders.map((o) => (
+          {commandes.map((o) => (
             <div
               key={o.id}
               className="bg-white p-6 rounded-xl shadow-md flex items-center justify-between gap-4"
             >
               <div>
                 <p className="text-sm text-gray-500">{o.id}</p>
-                <p className="text-xl font-bold text-gray-800">
-                  {o.quantite} x {o.produit}
-                </p>
-                <p className="text-gray-500">{o.commerce}</p>
+                {o.lignes.map((l) => (
+                  <p key={l.offreId} className="text-xl font-bold text-gray-800">
+                    {l.quantite} x {l.titre}
+                  </p>
+                ))}
+                <p className="text-gray-500">{o.commerceNom}</p>
                 <p className="text-green-700 font-semibold mt-1">
-                  {o.total} DT · {o.statut}
+                  {o.montantTotal} DT · {libelle[o.statut] || o.statut}
                 </p>
+                {o.statut === 'EN_ATTENTE_PAIEMENT' && (
+                  <button
+                    onClick={() => payer(o.id)}
+                    className="mt-2 bg-green-600 text-white px-4 py-1 rounded-lg hover:bg-green-700"
+                  >
+                    Payer
+                  </button>
+                )}
               </div>
-              <QRCodeSVG value={o.id} size={96} />
+              {o.qrCode && <QRCodeSVG value={o.qrCode} size={96} />}
             </div>
           ))}
         </div>
